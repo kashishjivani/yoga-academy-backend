@@ -1,40 +1,43 @@
-const express = require("express");
-const router = express.Router();
-const connection = require("../db");
+const Payment = require("../models/Payment");
+const UserBatchPayment = require("../models/UserBatchPayment");
 
-router.post("/api/details", (req, res) => {
-  const { userID, selectedBatch } = req.body;
+const detailsController = async (req, res, next) => {
+  // Logic for inserting batch and payment details
+
+  const { userID: userId, selectedBatch: batchId } = await req.body; // UserId and BatchId will be fetched from the req body
+  const completePayment = (amount) => {
+    if (amount === 500);
+    return true;
+  };
   const paymentDate = new Date();
-  const amount = 500;
-  const paymentStatus = true;
+  const amount = 500;                          // Hardcoded values for payment
+  const paymentStatus = completePayment(amount);
   const response = null;
 
-  const insertQuery =
-    "INSERT INTO payments (paymentDate, amount, paymentStatus, response, userID) VALUES (?, ?, ?, ?, ?)";
-  const paymentValues = [paymentDate, amount, paymentStatus, response, userID];
+  if (paymentStatus) {                       // If payment is successful the data will be inserted
+    try {
+      const paymentDetail = await Payment.create({
+        paymentDate,
+        amount,
+        paymentStatus,
+        response,
+        userId,
+      });
 
-  connection.query(insertQuery, paymentValues, (error, paymentResults) => {
-    if (error) {
+      const paymentId = paymentDetail.dataValues.paymentId;  // Retrieving paymentId for inserting it in user_batch_payment table
+
+      await UserBatchPayment.create({  // Inserting in the user_batch_payment table
+        userId,
+        batchId: parseInt(batchId),
+        paymentId,
+      });
+
+      res.status(201).json({ message: "Payment Successful" });
+    } catch (error) {
       console.error("Error inserting data into MySQL:", error);
-      return res.status(500).json({ error: "Internal server error" });
+      res.status(500).json({ error: "Internal server error" });
     }
+  }
+};
 
-    const paymentID = paymentResults.insertId;
-
-    const userBatchPaymentQuery =
-      "INSERT INTO user_batch_payment VALUES (?, ?, ?)";
-    const values = [userID, selectedBatch, paymentID];
-
-    connection.query(userBatchPaymentQuery, values, (error, results) => {
-      if (error) {
-        console.error("Error inserting data into MySQL:", error);
-        return res.status(500).json({ error: "Internal server error" });
-      }
-
-      console.log("Details inserted successfully");
-      res.status(201).json({ message: "Payment Successful", results });
-    });
-  });
-});
-
-module.exports = router;
+module.exports = detailsController;

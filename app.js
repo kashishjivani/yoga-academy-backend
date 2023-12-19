@@ -2,12 +2,11 @@ const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
-const userController = require('./controllers/userController');
-const detailsController = require('./controllers/detailsController');
-const batchController = require('./controllers/batchController');
+const sequelize = require('./utils/db');
+const infoRoute = require('./routes/InfoRoute');
 
+dotenv.config();   // For parsing env variables
 
-dotenv.config();
 const port = process.env.PORT || 3001;
 
 const app = express();
@@ -15,9 +14,9 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
-app.use(userController);
-app.use(detailsController);
-app.use(batchController);
+sequelize.sync();   // Keeps models and tables in sync
+
+app.use("/api", infoRoute); 
 
 app.listen(3001, () => {
     console.log(`Server is running on port ${port}`);
