@@ -4,7 +4,7 @@ const detailsController = require('../controllers/detailsController');
 const fetchBatches  = require('../controllers/fetchBatchController');
 const generateBatches = require('../controllers/generateBatchController');
 
-const router = express.Router();
+const router = express.Router();  // Contains all the routes in the application
 
 router.route("/user").post(userController);
 router.route("/details").post(detailsController);

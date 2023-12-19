@@ -19,7 +19,8 @@ const UserBatchPayment = sequelize.define("user_batch_payment", {
 
 }, {
   timestamps: false,
-  freezeTableName: true
+  freezeTableName: true,
+  primarykey: false
 });
 
 UserBatchPayment.belongsTo(User, { foreignKey: 'userId' });

@@ -11,9 +11,9 @@ const sequelize = new Sequelize(
     dialect: process.env.DB_DIALECT,
     host: process.env.DB_HOST,
   }
-);
+);  // Creating sequelize object by passing host, user, password, database and dialect
 
-sequelize
+sequelize  // Connecting to the database
   .authenticate()
   .then(() => {
     console.log("Connection has been established successfully.");
