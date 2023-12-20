@@ -3,7 +3,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
 const sequelize = require('./utils/db');
-const infoRoute = require('./routes/InfoRoute');
+const infoRoute = require('./routes/infoRoute');
 
 dotenv.config();   // For parsing env variables
 
